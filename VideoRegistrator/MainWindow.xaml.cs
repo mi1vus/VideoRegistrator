@@ -32,7 +32,7 @@ namespace VideoRegistrator
         int frameCount = 1;
         //int sleep = 50;
         int maxBufferReadSize = 10 * 1024 * 1024;
-        int maxBufferSaveSize = 250 * 1024 * 1024;
+        int maxBufferSaveSize = 50 * 1024 * 1024;
         public static MemoryStream inStream = new MemoryStream();
         public static MemoryStream outStream = new MemoryStream();
 
@@ -262,7 +262,7 @@ namespace VideoRegistrator
                         }
                         else
                         {
-                            outStream.SetLength(outStream.Length);
+                            outStream.Seek(outStream.Length, SeekOrigin.Begin);
                             actualStreamPosition = readen + actualStreamPosition;
                         }
                     }
@@ -290,6 +290,7 @@ namespace VideoRegistrator
                             if (saveBuffer[bufferOffset] == 0xFF && saveBuffer[bufferOffset + 1] == 0xD8 && saveBuffer[bufferOffset + 2] == 0xFF && saveBuffer[bufferOffset + 3] == 0xE0)
                             {
                                 isJpegStartFound = bufferOffset;
+                                bufferOffset++;
                                 break;
                             }
                         }
@@ -302,13 +303,17 @@ namespace VideoRegistrator
                             {
                                 int frameSize = bufferOffset - isJpegStartFound;
 
-                                byte[] frame = new byte[frameSize];
 
-                                Array.Copy(saveBuffer, isJpegStartFound, frame, 0, frameSize);
+                                if (frameSize > 0)
+                                {
+                                    byte[] frame = new byte[frameSize];
 
-                                Application.Current.Dispatcher.BeginInvoke(callback, new object[] { frame });
+                                    Array.Copy(saveBuffer, isJpegStartFound, frame, 0, frameSize);
 
-                                isJpegStartFound = -1;
+                                    Application.Current.Dispatcher.BeginInvoke(callback, frame);
+
+                                    isJpegStartFound = -1;
+                                }
                                 //bufferOffset++;
                                 break;
                             }
