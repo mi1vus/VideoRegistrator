@@ -5,12 +5,14 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:VideoRegistrator"
         mc:Ignorable="d"
-        Title="MainWindow" Height="388" Width="446">
+        Title="MainWindow" Height="588.569" Width="800.718">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        <Image x:Name="image" HorizontalAlignment="Left" Height="347" Margin="10,10,0,0" VerticalAlignment="Top" Width="402"/>
+        <Image x:Name="image" HorizontalAlignment="Left" Height="507" Margin="10,10,0,0" VerticalAlignment="Top" Width="774"/>
+        <Label x:Name="label1" Content="Label" HorizontalAlignment="Left" Margin="10,522,0,0" VerticalAlignment="Top" Height="29" Width="165"/>
+        <Label x:Name="label2" Content="Label" HorizontalAlignment="Left" Margin="180,522,0,0" VerticalAlignment="Top" Height="29" Width="604"/>
 
     </Grid>
 </Window>

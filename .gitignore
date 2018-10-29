@@ -260,3 +260,5 @@ paket-files/
 __pycache__/
 *.pyc
 *.mpeg
+*.docx
+/Files/Streams/1Stream1.txt
