@@ -47,17 +47,24 @@ namespace VideoRegistrator
 
         public MainWindow()
         {
-            InitializeComponent();
+            try
+            {
+                InitializeComponent();
 
-            //File.Delete($@"D:\Projects\C#_Proj\VideoRegistrator\Files\video.mpeg4");
-            //File.Delete($@"D:\Projects\C#_Proj\VideoRegistrator\Files\video2.mpeg");
-            File.Delete($@"D:\Projects\C#_Proj\VideoRegistrator\Files\progress.txt");
-            File.Delete($@"D:\Projects\C#_Proj\VideoRegistrator\Files\log.txt");
-            File.Delete($@"D:\Projects\C#_Proj\VideoRegistrator\Files\countlog.txt");
+                //File.Delete($@"Files\video.mpeg4");
+                //File.Delete($@"Files\video2.mpeg");
+                File.Delete($@"Files\progress.txt");
+                File.Delete($@"Files\log.txt");
+                File.Delete($@"Files\countlog.txt");
 
-            ConvertStream(/*inStream, */outStream);
+                ConvertStream(/*inStream, */outStream);
 
-            connectButton_Click();
+                connectButton_Click();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
         }
 
         private void connectButton_Click()
@@ -136,7 +143,7 @@ namespace VideoRegistrator
                 while (true)
                 {
                     int readen = streamResponse.Read(readBuffer, actualData, maxBufferReadSize - actualData);
-                    //File.WriteAllBytes($@"D:\Projects\C#_Proj\VideoRegistrator\Files\Streams\1Stream{fileCount}.txt", readBuffer);
+                    //File.WriteAllBytes($@"Files\Streams\1Stream{fileCount}.txt", readBuffer);
                     ++fileCount;
 
                     if (readen == 0)
@@ -263,7 +270,7 @@ namespace VideoRegistrator
 
                     if (actualData == maxBufferSaveSize)
                     {
-                        //File.WriteAllBytes($@"D:\Projects\C#_Proj\VideoRegistrator\Files\Streams\2Stream{fileCount}.txt", saveBuffer);
+                        //File.WriteAllBytes($@"Files\Streams\2Stream{fileCount}.txt", saveBuffer);
                         ++fileCount;
 
                         actualData -= bufferOffset;
@@ -325,12 +332,12 @@ namespace VideoRegistrator
         {
             try
             {
-                if (framebuffer.Length > 0 && (iFrame || recvCount < 150 || recvCount % 5 == 0))
+                if (framebuffer.Length > 0 && (iFrame || recvCount < 150 || recvCount % 1 == 0))
                 {
-                    //File.WriteAllBytes($@"D:\Projects\C#_Proj\VideoRegistrator\Files\Frames\Frame{recvCount}.mpeg4", framebuffer);
-                    //AppendAllBytes($@"D:\Projects\C#_Proj\VideoRegistrator\Files\video.mpeg4", framebuffer);
+                    //File.WriteAllBytes($@"Files\Frames\Frame{recvCount}.mpeg4", framebuffer);
+                    //AppendAllBytes($@"Files\video.mpeg4", framebuffer);
                     ffinStream.Write(framebuffer, 0, framebuffer.Length);
-                    File.AppendAllText($@"D:\Projects\C#_Proj\VideoRegistrator\Files\countlog.txt", $@"recv {recvCount} - " + (iFrame ? "I" : "-") + $@"     {DateTime.Now}" + Environment.NewLine);
+                    File.AppendAllText($@"Files\countlog.txt", $@"recv {recvCount} - " + (iFrame ? "I" : "-") + $@"     {DateTime.Now}" + Environment.NewLine);
                     ++recvCount;
                     isIFrame = false;
                 }
@@ -345,13 +352,13 @@ namespace VideoRegistrator
         {
             try
             {
-                //File.WriteAllBytes($@"D:\Projects\C#_Proj\VideoRegistrator\Files\Frames\Frame{frameCount}.mpeg4", framebuffer);
-                //AppendAllBytes($@"D:\Projects\C#_Proj\VideoRegistrator\Files\video2.mpeg", framebuffer);
+                //File.WriteAllBytes($@"Files\Frames\Frame{frameCount}.mpeg4", framebuffer);
+                //AppendAllBytes($@"Files\video2.mpeg", framebuffer);
 
                 if (framebuffer.Length > 0)
                 {
-                    //AppendAllBytes($@"D:\Projects\C#_Proj\VideoRegistrator\Files\video2.mpeg", framebuffer);
-                    File.AppendAllText($@"D:\Projects\C#_Proj\VideoRegistrator\Files\countlog.txt", $@"dec {decCount}         {DateTime.Now}" + Environment.NewLine);
+                    //AppendAllBytes($@"Files\video2.mpeg", framebuffer);
+                    File.AppendAllText($@"Files\countlog.txt", $@"dec {decCount}         {DateTime.Now}" + Environment.NewLine);
                     ++decCount;
                     JpegBitmapDecoder decoder = new JpegBitmapDecoder(new MemoryStream(framebuffer), BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.Default);
                     BitmapSource bitmapSource = decoder.Frames[0];
@@ -359,7 +366,7 @@ namespace VideoRegistrator
                 }
             }
             catch (Exception ex)
-             {
+            {
                 MessageBox.Show(ex.ToString());
             }
         }
@@ -367,42 +374,48 @@ namespace VideoRegistrator
         private Task ConvertStream(/*Stream input, */Stream outputStream)
         {
             Task convertTask = new Task(() => {
-
-                var convertSettings = new ConvertSettings
+                try
                 {
-                    CustomOutputArgs = "-map 0",
-                    CustomInputArgs = "-vcodec h264"
-                };
-                //convertSettings.SetVideoFrameSize(360, 360);
-                var ffMpeg = new FFMpegConverter();
-                ffMpeg.ConvertProgress += FfMpeg_ConvertProgress;
-                ffMpeg.LogReceived += FfMpeg_LogReceived;
+                    var convertSettings = new ConvertSettings
+                    {
+                        CustomOutputArgs = "-map 0",
+                        CustomInputArgs = "-vcodec h264"
+                    };
+                    //convertSettings.SetVideoFrameSize(360, 360);
+                    var ffMpeg = new FFMpegConverter();
+                    ffMpeg.ConvertProgress += FfMpeg_ConvertProgress;
+                    ffMpeg.LogReceived += FfMpeg_LogReceived;
 
-                //task = ffMpeg.ConvertLiveMedia(Format.h264, outStream, Format.mjpeg, convertSettings);
-                //task = ffMpeg.ConvertLiveMedia(inStream, Format.h264, outStream, Format.mjpeg, convertSettings);
-                //            task = ffMpeg.ConvertLiveMedia(inStream, Format.h264, $@"D:\Projects\C#_Proj\VideoRegistrator\Files\video2.mpeg", Format.mjpeg, convertSettings);
-                //            task.Start();
-                //ffMpeg.ConvertMedia($@"D:\Projects\C#_Proj\VideoRegistrator\Files\video.mpeg4", Format.h264, $@"D:\Projects\C#_Proj\VideoRegistrator\Files\video3.mpeg", Format.mjpeg, convertSettings);
-                //var task = ffMpeg.ConvertLiveMedia(Format.h264, "C:\\Work\\Test\\converted.avi", Format.avi, convertSettings);
-                //ffMpeg.ConvertMedia($@"D:\Projects\C#_Proj\VideoRegistrator\Files\video.mpeg4", $@"D:\Projects\C#_Proj\VideoRegistrator\Files\video2.flv", Format.flv);
-                //var setting = new NReco.VideoConverter.ConvertSettings();
-                //setting.SetVideoFrameSize(360, 360);
-                //setting.VideoCodec = "h264";
-                //ffMpeg.ConvertMedia($@"D:\Projects\C#_Proj\VideoRegistrator\Files\video.mpeg4", Format.h264, $@"D:\Projects\C#_Proj\VideoRegistrator\Files\video2.mjpeg", Format.mjpeg, setting);
-                //task.Stop();
-                var task = ffMpeg.ConvertLiveMedia(Format.h264, outputStream, Format.mjpeg, convertSettings);
+                    //task = ffMpeg.ConvertLiveMedia(Format.h264, outStream, Format.mjpeg, convertSettings);
+                    //task = ffMpeg.ConvertLiveMedia(inStream, Format.h264, outStream, Format.mjpeg, convertSettings);
+                    //            task = ffMpeg.ConvertLiveMedia(inStream, Format.h264, $@"Files\video2.mpeg", Format.mjpeg, convertSettings);
+                    //            task.Start();
+                    //ffMpeg.ConvertMedia($@"Files\video.mpeg4", Format.h264, $@"Files\video3.mpeg", Format.mjpeg, convertSettings);
+                    //var task = ffMpeg.ConvertLiveMedia(Format.h264, "C:\\Work\\Test\\converted.avi", Format.avi, convertSettings);
+                    //ffMpeg.ConvertMedia($@"Files\video.mpeg4", $@"Files\video2.flv", Format.flv);
+                    //var setting = new NReco.VideoConverter.ConvertSettings();
+                    //setting.SetVideoFrameSize(360, 360);
+                    //setting.VideoCodec = "h264";
+                    //ffMpeg.ConvertMedia($@"Files\video.mpeg4", Format.h264, $@"Files\video2.mjpeg", Format.mjpeg, setting);
+                    //task.Stop();
+                    var task = ffMpeg.ConvertLiveMedia(Format.h264, outputStream, Format.mjpeg, convertSettings);
 
-                task.Start();
+                    task.Start();
 
-                ffinStream = new FFMPegStream(task);
-                //var copyTask = input.CopyToAsync(ffmpegStream);
-                //copyTask.Wait();
-                //ffmpegStream.Close();
+                    ffinStream = new FFMPegStream(task);
+                    //var copyTask = input.CopyToAsync(ffmpegStream);
+                    //copyTask.Wait();
+                    //ffmpegStream.Close();
 
-                task.Wait();
-                //ffMpeg.ConvertMedia(@"C:\Work\Test\MyHomeSecureNode\devices\test\video.h264", "C:\\Work\\Test\\converted.avi", Format.avi);
+                    task.Wait();
+                    //ffMpeg.ConvertMedia(@"C:\Work\Test\MyHomeSecureNode\devices\test\video.h264", "C:\\Work\\Test\\converted.avi", Format.avi);
 
-                outputStream.Close();
+                    outputStream.Close();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.ToString());
+                }
             });
 
             convertTask.Start();
@@ -411,23 +424,43 @@ namespace VideoRegistrator
 
         private void FfMpeg_ConvertProgress(object sender, ConvertProgressEventArgs e)
         {
-            progr = e.Processed.ToString();
-            File.AppendAllText($@"D:\Projects\C#_Proj\VideoRegistrator\Files\progress.txt", string.Format("ffmpeg progress: {0}" + Environment.NewLine, e.Processed.ToString()));
+            try
+            { 
+                progr = e.Processed.ToString();
+                File.AppendAllText($@"Files\progress.txt", string.Format("ffmpeg progress: {0}" + Environment.NewLine, e.Processed.ToString()));
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
         }
 
         private void FfMpeg_LogReceived(object sender, FFMpegLogEventArgs e)
         {
-            log = e.Data.ToString();
-            File.AppendAllText($@"D:\Projects\C#_Proj\VideoRegistrator\Files\log.txt", string.Format("ffmpeg log: {0}" + Environment.NewLine + Environment.NewLine + Environment.NewLine, e.Data.ToString()));
+            try
+            { 
+                log = e.Data.ToString();
+                File.AppendAllText($@"Files\log.txt", string.Format("ffmpeg log: {0}" + Environment.NewLine + Environment.NewLine + Environment.NewLine, e.Data.ToString()));
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
         }
 
         public static void AppendAllBytes(string path, byte[] bytes)
         {
             //argument-checking here.
-
-            using (var stream = new FileStream(path, FileMode.Append))
+            try
             {
-                stream.Write(bytes, 0, bytes.Length);
+                using (var stream = new FileStream(path, FileMode.Append))
+                {
+                    stream.Write(bytes, 0, bytes.Length);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
             }
         }
 
@@ -436,21 +469,42 @@ namespace VideoRegistrator
             private ConvertLiveMediaTask mMediaTask;
             public FFMPegStream(ConvertLiveMediaTask mediaTask)
             {
-                mMediaTask = mediaTask;
+                try
+                {
+                    mMediaTask = mediaTask;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.ToString());
+                }
             }
 
 
             public override void Write(byte[] buffer, int offset, int count)
             {
-                lock (outStream)
+                try
                 {
-                    mMediaTask.Write(buffer, offset, count);
+                    lock (outStream)
+                    {
+                        mMediaTask.Write(buffer, offset, count);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.ToString());
                 }
             }
 
             public override void Close()
             {
-                mMediaTask.Stop();
+                try
+                {
+                    mMediaTask.Stop();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.ToString());
+                }
             }
 
             public override bool CanRead
