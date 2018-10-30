@@ -1,0 +1,34 @@
+﻿<UserControl x:Class="HttpInterface.ArchiveEventsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:httpInterface="clr-namespace:HttpInterface"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300"
+			 d:DataContext="{d:DesignInstance httpInterface:ArchiveEventsViewModel}">
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="30"/>
+			<RowDefinition Height="30"/>
+			<RowDefinition Height="70"/>
+			<RowDefinition Height="*"/>
+		</Grid.RowDefinitions>
+		<TextBox Text="{Binding SelectedDateTimeStart}"
+				 Margin="0 5"/>
+		<TextBox Grid.Row="1" Text="{Binding SelectedDateTimeEnd}"
+				 Margin="0 5"/>
+		<Button Grid.Row="2" Content="Get Archive Events" Command="{Binding GetArchiveEventsCommand}" Width="150" Height="50"/>
+		<ListBox Grid.Row="3" ItemsSource="{Binding ArchiveEvents}">
+			<ListBox.ItemTemplate>
+				<DataTemplate>
+					<StackPanel>
+						<TextBlock Text="{Binding Id}"/>
+						<TextBlock Text="{Binding Name}"/>
+						<TextBlock Text="{Binding Data}"/>
+					</StackPanel>
+				</DataTemplate>
+			</ListBox.ItemTemplate>
+		</ListBox>
+	</Grid>
+</UserControl>

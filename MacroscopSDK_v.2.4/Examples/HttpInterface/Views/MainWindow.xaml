@@ -1,0 +1,47 @@
+﻿<Window x:Class="HttpInterface.MainWindow"
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:httpInterface="clr-namespace:HttpInterface"
+		mc:Ignorable="d"
+		Title="MainWindow"
+		ResizeMode="CanMinimize"
+		Height="550"
+		Width="900"
+		d:DataContext="{d:DesignInstance httpInterface:MainWindowViewModel}">
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="120" />
+			<RowDefinition Height="*" />
+			<RowDefinition Height="25" />
+		</Grid.RowDefinitions>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="250" />
+			<ColumnDefinition Width="300" />
+			<ColumnDefinition Width="*" />
+		</Grid.ColumnDefinitions>
+		<httpInterface:ConnectionView DataContext="{Binding ConnectionViewModel}"
+									  Grid.Column="0" />
+		<httpInterface:RegisteredEventsView DataContext="{Binding RegisteredEventsViewModel}"
+											Grid.Row="0"
+											Grid.Column="1"
+											Grid.RowSpan="2" />
+		<httpInterface:ChannelsView DataContext="{Binding ChannelsViewModel}"
+									Grid.Row="1"
+									Grid.Column="0" />
+		<TabControl Grid.Row="0"
+					Grid.Column="2"
+					Grid.RowSpan="2">
+			<TabItem Header="Live Events">
+				<httpInterface:EventsUpdaterView DataContext="{Binding EventsUpdaterViewModel}" />
+			</TabItem>
+			<TabItem Header="Archive Events">
+				<httpInterface:ArchiveEventsView DataContext="{Binding ArchiveEventsViewModel}" />
+			</TabItem>
+		</TabControl>
+		<httpInterface:UrlViewer DataContext="{Binding UrlViewerViewModel}" Grid.Row="2"
+						 Grid.Column="0"
+						 Grid.ColumnSpan="3"/>
+	</Grid>
+</Window>

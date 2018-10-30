@@ -1,0 +1,186 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{C22065C2-5097-44D8-9F48-24FE9ABEEE5C}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>HttpInterface</RootNamespace>
+    <AssemblyName>HttpInterface</AssemblyName>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Xaml">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="WindowsBase" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="Views\App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+    <Compile Include="Models\ConfigInfo\ChannelInfo.cs" />
+    <Compile Include="Models\ConfigInfo\ConfigurationInfo.cs" />
+    <Compile Include="Models\ConfigInfo\ArchiveParameters.cs" />
+    <Compile Include="Models\ConfigInfo\ServerInfo.cs" />
+    <Compile Include="Models\ArchiveEventsModel.cs" />
+    <Compile Include="Models\Helpers\DispatcherInvokator.cs" />
+    <Compile Include="Models\Helpers\Md5Helper.cs" />
+    <Compile Include="Models\Interfaces\IDispatcherInvokator.cs" />
+    <Compile Include="Models\Interfaces\Model\IArchiveParametersModel.cs" />
+    <Compile Include="Models\Interfaces\Model\IArchiveEventsModel.cs" />
+    <Compile Include="Properties\Annotations1.cs" />
+    <Compile Include="ViewModels\Interfaces\IChannelsViewModel.cs" />
+    <Compile Include="ViewModels\Interfaces\IRegisteredEventsViewModel.cs" />
+    <Compile Include="Models\Helpers\JsonEventParser.cs" />
+    <Compile Include="Models\RegisteredEventsModel.cs" />
+    <Compile Include="Models\Interfaces\Model\IChannelsModel.cs" />
+    <Compile Include="Models\Interfaces\Model\IRegisteredEventsModel.cs" />
+    <Compile Include="Models\Interfaces\Model\IConnectionParametersModel.cs" />
+    <Compile Include="Models\Interfaces\IWebRequestFactory.cs" />
+    <Compile Include="Models\Communication\WebRequestFactory.cs" />
+    <Compile Include="Models\EventsUpdaterModel.cs" />
+    <Compile Include="Models\Events\SubscribedEventArgs.cs" />
+    <Compile Include="Models\Events\SubscribedEvent.cs" />
+    <Compile Include="Models\ConfigInfo\ConnectionParameter.cs" />
+    <Compile Include="Commands\RelayCommand.cs" />
+    <Compile Include="Models\ConfigInfo\EventInfo.cs" />
+    <Compile Include="Models\ChannelsModel.cs" />
+    <Compile Include="Properties\Annotations.cs" />
+    <Compile Include="ViewModels\ChannelsViewModel.cs" />
+    <Compile Include="ViewModels\ConnectionViewModel.cs" />
+    <Compile Include="ViewModels\ArchiveEventsViewModel.cs" />
+    <Compile Include="ViewModels\EventsUpdaterViewModel.cs" />
+    <Compile Include="ViewModels\Interfaces\IUrlViewer.cs" />
+    <Compile Include="ViewModels\RegisteredEventsViewModel.cs" />
+    <Compile Include="ViewModels\UrlViewerViewModel.cs" />
+    <Compile Include="Views\ChannelsView.xaml.cs">
+      <DependentUpon>ChannelsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ConnectionView.xaml.cs">
+      <DependentUpon>ConnectionView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ArchiveEventsView.xaml.cs">
+      <DependentUpon>ArchiveEventsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\EventsUpdaterView.xaml.cs">
+      <DependentUpon>EventsUpdaterView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ViewModels\MainWindowViewModel.cs" />
+    <Compile Include="Views\RegisteredEventsView.xaml.cs">
+      <DependentUpon>RegisteredEventsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\UrlViewer.xaml.cs">
+      <DependentUpon>UrlViewer.xaml</DependentUpon>
+    </Compile>
+    <Page Include="Views\ChannelsView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\ConnectionView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ArchiveEventsView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\EventsUpdaterView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\MainWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Compile Include="Views\App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Views\MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Page Include="Views\RegisteredEventsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\UrlViewer.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <None Include="app.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <AppDesigner Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

@@ -31,8 +31,8 @@ namespace VideoRegistrator
         private HttpWebRequest webRequest = null;
         string log = "";
         string progr = "";
-        int maxBufferReadSize = 10 * 1024 * 1024;
-        int maxBufferSaveSize = 50 * 1024 * 1024;
+        int maxBufferReadSize = 1 * 124 * 1024;
+        int maxBufferSaveSize = 1 * 1024 * 1024;
         public static Timer timer;
         
         int recvCount = 1;
@@ -53,9 +53,11 @@ namespace VideoRegistrator
 
                 //File.Delete($@"Files\video.mpeg4");
                 //File.Delete($@"Files\video2.mpeg");
-                File.Delete($@"Files\progress.txt");
-                File.Delete($@"Files\log.txt");
-                File.Delete($@"Files\countlog.txt");
+                Directory.Delete(@"Files", true); //true - если директория не пуста удаляем все ее содержимое
+                Directory.CreateDirectory(@"Files");
+                Directory.CreateDirectory(@"Files\Streams");
+                Directory.CreateDirectory(@"Files\Frames");
+
 
                 ConvertStream(/*inStream, */outStream);
 
@@ -84,7 +86,7 @@ namespace VideoRegistrator
                 var adress = string.Format(
  //"http://91.230.153.2:1235/mobile?channelnum={0}&login={1}&password={2}"
  "http://91.230.153.2:1235/video?channelnum={0}&login={1}&password={2}"
- //+ "&resolutionx=640&resolutiony=480&fps=10"
+ //+ "&resolutionx=640&resolutiony=480&fps=2"
  //+ "&streamtype=alternative"
  , 0, "root", "");
 
@@ -143,8 +145,6 @@ namespace VideoRegistrator
                 while (true)
                 {
                     int readen = streamResponse.Read(readBuffer, actualData, maxBufferReadSize - actualData);
-                    //File.WriteAllBytes($@"Files\Streams\1Stream{fileCount}.txt", readBuffer);
-                    ++fileCount;
 
                     if (readen == 0)
                         return;
@@ -153,9 +153,17 @@ namespace VideoRegistrator
 
                     if (actualData == maxBufferReadSize)
                     {
-                                               
                         actualData -= bufferOffset;
 
+                        byte[] readed = new byte[bufferOffset];
+
+                        Array.Copy(readBuffer, 0, readed, 0, bufferOffset);
+
+                        File.WriteAllBytes($@"Files\Streams\1Stream{fileCount}.txt", readed);
+
+                        //Application.Current.Dispatcher.BeginInvoke(callback, new object[] { readed, true });
+
+                        ++fileCount;
                         Array.Copy(readBuffer, bufferOffset, readBuffer, 0, actualData);
                         bufferOffset = 0;
                     }
@@ -174,13 +182,13 @@ namespace VideoRegistrator
                                 isJpegStartFound = bufferOffset;
                                 break;
                             }
-                            else if (readBuffer[bufferOffset] == 0x49 &&
-                                readBuffer[bufferOffset + 1] == 0x2D &&
-                                readBuffer[bufferOffset + 2] == 0x66 &&
-                                readBuffer[bufferOffset + 3] == 0x72 &&
-                                readBuffer[bufferOffset + 4] == 0x61 &&
-                                readBuffer[bufferOffset + 5] == 0x6D &&
-                                readBuffer[bufferOffset + 6] == 0x65)
+                            else if (readBuffer[bufferOffset] == 0x49 &&    /*I*/
+                                readBuffer[bufferOffset + 1] == 0x2D &&     /*-*/
+                                readBuffer[bufferOffset + 2] == 0x66 &&     /*f*/
+                                readBuffer[bufferOffset + 3] == 0x72 &&     /*r*/
+                                readBuffer[bufferOffset + 4] == 0x61 &&     /*a*/
+                                readBuffer[bufferOffset + 5] == 0x6D &&     /*m*/
+                                readBuffer[bufferOffset + 6] == 0x65)       /*e*/
                             {
                                 isIFrame = true;
                             }
@@ -190,7 +198,11 @@ namespace VideoRegistrator
                     {
                         for (; bufferOffset + 2 < actualData; bufferOffset++)
                         {
-                            if (readBuffer[bufferOffset] == 0x2D /*0xFF*/ && readBuffer[bufferOffset + 1] == 0x2D /*0xD9*/&& readBuffer[bufferOffset + 2] == 0x6D && readBuffer[bufferOffset + 3] == 0x79)
+                            if (
+                                readBuffer[bufferOffset] == 0x2D &&     /*-*/
+                                readBuffer[bufferOffset + 1] == 0x2D && /*-*/
+                                readBuffer[bufferOffset + 2] == 0x6D && /*m*/
+                                readBuffer[bufferOffset + 3] == 0x79)   /*y*/
                             {
                                 int frameSize = bufferOffset - isJpegStartFound;
 
@@ -201,7 +213,6 @@ namespace VideoRegistrator
                                     Array.Copy(readBuffer, isJpegStartFound, frame, 0, frameSize);
 
                                     Application.Current.Dispatcher.BeginInvoke(callback, new object[] { frame, isIFrame ? true : false });
-                                    //Application.Current.Dispatcher.BeginInvoke(callback, new object[] { frame });
                                     isIFrame = false;
                                 }
 
@@ -209,7 +220,11 @@ namespace VideoRegistrator
                                 bufferOffset++;
                                 break;
                             }
-                            else if (readBuffer[bufferOffset] == '\r' && readBuffer[bufferOffset + 1] == '\n' && readBuffer[bufferOffset + 2] == '\r'/*0xFF*/ && readBuffer[bufferOffset + 3] == '\n'/*0xD8*/)
+                            else if (
+                                readBuffer[bufferOffset] == '\r' && 
+                                readBuffer[bufferOffset + 1] == '\n' && 
+                                readBuffer[bufferOffset + 2] == '\r'/*0xFF*/ && 
+                                readBuffer[bufferOffset + 3] == '\n'/*0xD8*/)
                             {
                                 isJpegStartFound = bufferOffset;
                             }
@@ -332,14 +347,14 @@ namespace VideoRegistrator
         {
             try
             {
-                if (framebuffer.Length > 0 && (iFrame || recvCount < 150 || recvCount % 1 == 0))
+                if (framebuffer.Length > 0 /*&& (iFrame || recvCount < 150 || recvCount % 1 == 0)*/)
                 {
                     //File.WriteAllBytes($@"Files\Frames\Frame{recvCount}.mpeg4", framebuffer);
-                    //AppendAllBytes($@"Files\video.mpeg4", framebuffer);
+                    AppendAllBytes($@"Files\video.mpeg4", framebuffer);
                     ffinStream.Write(framebuffer, 0, framebuffer.Length);
-                    File.AppendAllText($@"Files\countlog.txt", $@"recv {recvCount} - " + (iFrame ? "I" : "-") + $@"     {DateTime.Now}" + Environment.NewLine);
+                    //File.AppendAllText($@"Files\countlog.txt", $@"recv {recvCount} - " + (iFrame ? "I" : "-") + $@"     {DateTime.Now}" + Environment.NewLine);
                     ++recvCount;
-                    isIFrame = false;
+                    //isIFrame = false;
                 }
             }
             catch (Exception ex)
@@ -381,7 +396,7 @@ namespace VideoRegistrator
                         CustomOutputArgs = "-map 0",
                         CustomInputArgs = "-vcodec h264"
                     };
-                    //convertSettings.SetVideoFrameSize(360, 360);
+                    convertSettings.SetVideoFrameSize(360, 360);
                     var ffMpeg = new FFMpegConverter();
                     ffMpeg.ConvertProgress += FfMpeg_ConvertProgress;
                     ffMpeg.LogReceived += FfMpeg_LogReceived;

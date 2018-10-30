@@ -1,0 +1,12 @@
+﻿<Window x:Class="Analyst_PluginExample.GUI.SettingsWindow"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Title="Настройки" WindowStartupLocation="CenterScreen" ResizeMode="NoResize" Topmost="True" FontFamily="Calibri" FontSize="12" SizeToContent="WidthAndHeight">
+    <StackPanel Margin="2">
+        <Label>Видео:</Label>
+        <Image Name="frameRender" Width="128" Height="128" HorizontalAlignment="Left" Margin="8,0"></Image>
+        <Label>Задержка между послыками событий:</Label>
+        <TextBox Margin="8,0" Name="tbDelay" Width="150" HorizontalAlignment="Left"></TextBox>
+        <Button HorizontalAlignment="Left" Width="100" Margin="8,4" Click="OKButton_Click">ОК</Button>
+    </StackPanel>
+</Window>

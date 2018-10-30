@@ -1,0 +1,27 @@
+﻿<Window x:Class="HttpVideo.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Получение mjpeg по http" ResizeMode="NoResize" SizeToContent="WidthAndHeight" WindowStartupLocation="CenterScreen">
+	<StackPanel>
+		<Border BorderThickness="2" BorderBrush="Black" Margin="5" >
+		<Image DockPanel.Dock="Top" Name="frameRender" Width="744" Height="484" Stretch="UniformToFill"></Image>
+		</Border>
+		<StackPanel Margin="5" Orientation="Horizontal">
+		<Label Width="120">Адрес сервера:</Label>
+            <TextBox x:Name="tbCameraAdress" Width="120" Text="91.230.153.2:1235"/>
+        </StackPanel>
+		<StackPanel Margin="5" Orientation="Horizontal">
+			<Label Width="120">Название канала:</Label>
+            <TextBox x:Name="tbChannelName" Width="120" Text="0"/>
+        </StackPanel>
+		<StackPanel Margin="5" Orientation="Horizontal">
+			<Label Width="120">Пользователь:</Label>
+			<TextBox x:Name="tbUserName" Width="120">root</TextBox>
+		</StackPanel>
+		<StackPanel Margin="5" Orientation="Horizontal">
+			<Label Width="120">Пароль:</Label>
+			<TextBox x:Name="tbPassword" Width="120"></TextBox>
+		</StackPanel>
+		<Button Name="connectButton" Margin="5" Height="25" Click="connectButton_Click">Подключиться</Button>
+	</StackPanel>
+</Window>
