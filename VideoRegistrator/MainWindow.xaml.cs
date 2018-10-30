@@ -31,7 +31,7 @@ namespace VideoRegistrator
         private HttpWebRequest webRequest = null;
         string log = "";
         string progr = "";
-        int maxBufferReadSize = 100 * 1024 * 1024;
+        int maxBufferReadSize = 1 * 124 * 1024;
         int maxBufferSaveSize = 100 * 1024 * 1024;
         public static Timer timer;
         
@@ -152,25 +152,29 @@ namespace VideoRegistrator
                     int readen = streamResponse.Read(readBuffer, actualData, maxBufferReadSize - actualData);
 
                     if (readen == 0)
-                        return;
+                        continue;
 
+                    File.AppendAllText($@"Files\read.txt", $@"try read {maxBufferReadSize - actualData} from {actualData} of max {maxBufferReadSize} {Environment.NewLine}");
                     actualData += readen;
+                    File.AppendAllText($@"Files\read.txt", $@"read {readen} - actualData - {actualData} bufferOffset - {bufferOffset} {Environment.NewLine}");
 
-                    if (actualData == maxBufferReadSize)
+                    if (actualData >= maxBufferReadSize)
                     {
                         actualData -= bufferOffset;
+                        File.AppendAllText($@"Files\read.txt", $@"ovf actualData - {actualData} bufferOffset - {bufferOffset} {Environment.NewLine}");
 
                         byte[] readed = new byte[bufferOffset];
 
                         Array.Copy(readBuffer, 0, readed, 0, bufferOffset);
 
-                        //File.WriteAllBytes($@"Files\Streams\1Stream{fileCount}.txt", readed);
+                        File.WriteAllBytes($@"Files\Streams\1Stream{fileCount}.txt", readed);
 
                         //Application.Current.Dispatcher.BeginInvoke(callback, new object[] { readed, true });
 
                         ++fileCount;
                         Array.Copy(readBuffer, bufferOffset, readBuffer, 0, actualData);
                         bufferOffset = 0;
+                        File.AppendAllText($@"Files\read.txt", $@"ovf new actualData - {actualData} bufferOffset - {bufferOffset} {Environment.NewLine}");
                     }
 
 
@@ -284,7 +288,7 @@ namespace VideoRegistrator
                         }
                     }
                     if (readen == 0)
-                        return;
+                        continue;
 
                     actualData += readen;
 
