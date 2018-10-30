@@ -31,8 +31,8 @@ namespace VideoRegistrator
         private HttpWebRequest webRequest = null;
         string log = "";
         string progr = "";
-        int maxBufferReadSize = 1 * 124 * 1024;
-        int maxBufferSaveSize = 1 * 1024 * 1024;
+        int maxBufferReadSize = 100 * 1024 * 1024;
+        int maxBufferSaveSize = 100 * 1024 * 1024;
         public static Timer timer;
         
         int recvCount = 1;
@@ -53,7 +53,12 @@ namespace VideoRegistrator
 
                 //File.Delete($@"Files\video.mpeg4");
                 //File.Delete($@"Files\video2.mpeg");
-                Directory.Delete(@"Files", true); //true - если директория не пуста удаляем все ее содержимое
+                try
+                {
+                    Directory.Delete(@"Files", true); //true - если директория не пуста удаляем все ее содержимое
+                }
+                catch  { }
+
                 Directory.CreateDirectory(@"Files");
                 Directory.CreateDirectory(@"Files\Streams");
                 Directory.CreateDirectory(@"Files\Frames");
@@ -159,7 +164,7 @@ namespace VideoRegistrator
 
                         Array.Copy(readBuffer, 0, readed, 0, bufferOffset);
 
-                        File.WriteAllBytes($@"Files\Streams\1Stream{fileCount}.txt", readed);
+                        //File.WriteAllBytes($@"Files\Streams\1Stream{fileCount}.txt", readed);
 
                         //Application.Current.Dispatcher.BeginInvoke(callback, new object[] { readed, true });
 
@@ -347,12 +352,12 @@ namespace VideoRegistrator
         {
             try
             {
-                if (framebuffer.Length > 0 /*&& (iFrame || recvCount < 150 || recvCount % 1 == 0)*/)
+                if (framebuffer.Length > 0 /*&& (iFrame || recvCount < 150 || recvCount % 3 == 0)*/)
                 {
                     //File.WriteAllBytes($@"Files\Frames\Frame{recvCount}.mpeg4", framebuffer);
-                    AppendAllBytes($@"Files\video.mpeg4", framebuffer);
+                    //AppendAllBytes($@"Files\video.mpeg4", framebuffer);
                     ffinStream.Write(framebuffer, 0, framebuffer.Length);
-                    //File.AppendAllText($@"Files\countlog.txt", $@"recv {recvCount} - " + (iFrame ? "I" : "-") + $@"     {DateTime.Now}" + Environment.NewLine);
+                    File.AppendAllText($@"Files\countlog.txt", $@"recv {recvCount} - " + (iFrame ? "I" : "-") + $@"     {DateTime.Now}" + Environment.NewLine);
                     ++recvCount;
                     //isIFrame = false;
                 }
@@ -396,7 +401,7 @@ namespace VideoRegistrator
                         CustomOutputArgs = "-map 0",
                         CustomInputArgs = "-vcodec h264"
                     };
-                    convertSettings.SetVideoFrameSize(360, 360);
+                    //convertSettings.SetVideoFrameSize(360, 360);
                     var ffMpeg = new FFMpegConverter();
                     ffMpeg.ConvertProgress += FfMpeg_ConvertProgress;
                     ffMpeg.LogReceived += FfMpeg_LogReceived;
