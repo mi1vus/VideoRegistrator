@@ -31,8 +31,9 @@ namespace VideoRegistrator
         private HttpWebRequest webRequest = null;
         string log = "";
         string progr = "";
-        int maxBufferReadSize = 1 * 124 * 1024;
-        int maxBufferSaveSize = 100 * 1024 * 1024;
+        int maxBufferReadSize =     100 * 1024 * 1024;
+        int maxBufferlogSize =            100 * 1024;
+        int maxBufferSaveSize =    100 * 1024 * 1024;
         public static Timer timer;
         
         int recvCount = 1;
@@ -100,12 +101,14 @@ namespace VideoRegistrator
                 webRequest.Timeout = 10000;
                 webRequest.ReadWriteTimeout = 10000;
 
-                mainThread = new Thread(ReceiveThreadEntry);
-                mainThread.IsBackground = true;
-                mainThread.Start();
+                //mainThread = new Thread(ReceiveThreadEntry);
+                //mainThread.IsBackground = true;
+                //mainThread.Start();
+                Task saveTask1 = new Task(ReceiveThreadEntry);
+                saveTask1.Start();
 
-                Task saveTask = new Task(SaveThreadEntry);
-                saveTask.Start();
+                Task saveTask2 = new Task(SaveThreadEntry);
+                saveTask2.Start();
 
 
                 //saveThread = new Thread(SaveThreadEntry);
@@ -144,6 +147,7 @@ namespace VideoRegistrator
 
                 int actualData = 0;
                 int bufferOffset = 0;
+                int savedOffset = 0;
 
                 //Парсер http-ответа
                 var fileCount = 1;
@@ -151,36 +155,42 @@ namespace VideoRegistrator
                 {
                     int readen = streamResponse.Read(readBuffer, actualData, maxBufferReadSize - actualData);
 
-                    if (readen == 0)
-                        continue;
-
-                    File.AppendAllText($@"Files\read.txt", $@"try read {maxBufferReadSize - actualData} from {actualData} of max {maxBufferReadSize} {Environment.NewLine}");
-                    actualData += readen;
-                    File.AppendAllText($@"Files\read.txt", $@"read {readen} - actualData - {actualData} bufferOffset - {bufferOffset} {Environment.NewLine}");
-
-                    if (actualData >= maxBufferReadSize)
+                    if (readen > 0)
                     {
-                        actualData -= bufferOffset;
-                        File.AppendAllText($@"Files\read.txt", $@"ovf actualData - {actualData} bufferOffset - {bufferOffset} {Environment.NewLine}");
 
-                        byte[] readed = new byte[bufferOffset];
+                        File.AppendAllText($@"Files\read.txt", $@"try read {maxBufferReadSize - actualData} from {actualData} of max {maxBufferReadSize} {Environment.NewLine}");
+                        actualData += readen;
+                        File.AppendAllText($@"Files\read.txt", $@"read {readen} - actualData - {actualData} bufferOffset - {bufferOffset} {Environment.NewLine}");
 
-                        Array.Copy(readBuffer, 0, readed, 0, bufferOffset);
+                        if (actualData - savedOffset > maxBufferlogSize)
+                        {
+                            byte[] readed = new byte[maxBufferlogSize];
 
-                        File.WriteAllBytes($@"Files\Streams\1Stream{fileCount}.txt", readed);
+                            Array.Copy(readBuffer, savedOffset, readed, 0, maxBufferlogSize);
 
-                        //Application.Current.Dispatcher.BeginInvoke(callback, new object[] { readed, true });
+                            File.WriteAllBytes($@"Files\Streams\1Stream{fileCount}.txt", readed);
+                            savedOffset += maxBufferlogSize;
+                        }
 
-                        ++fileCount;
-                        Array.Copy(readBuffer, bufferOffset, readBuffer, 0, actualData);
-                        bufferOffset = 0;
-                        File.AppendAllText($@"Files\read.txt", $@"ovf new actualData - {actualData} bufferOffset - {bufferOffset} {Environment.NewLine}");
+
+                        if (actualData >= maxBufferReadSize)
+                        {
+                            actualData -= bufferOffset;
+                            File.AppendAllText($@"Files\read.txt", $@"ovf actualData - {actualData} bufferOffset - {bufferOffset} {Environment.NewLine}");
+
+
+                            //Application.Current.Dispatcher.BeginInvoke(callback, new object[] { readed, true });
+
+                            ++fileCount;
+                            Array.Copy(readBuffer, bufferOffset, readBuffer, 0, actualData);
+                            bufferOffset = 0;
+                            File.AppendAllText($@"Files\read.txt", $@"ovf new actualData - {actualData} bufferOffset - {bufferOffset} {Environment.NewLine}");
+                        }
                     }
-
 
                     if (isJpegStartFound == -1)
                     {
-                        for (; bufferOffset + 2 < actualData; bufferOffset++)
+                        for (; bufferOffset + 6 <= actualData; bufferOffset++)
                         {
                             if (
                                 readBuffer[bufferOffset] == '\r' && 
@@ -205,7 +215,7 @@ namespace VideoRegistrator
                     }
                     else
                     {
-                        for (; bufferOffset + 2 < actualData; bufferOffset++)
+                        for (; bufferOffset + 3 <= actualData; bufferOffset++)
                         {
                             if (
                                 readBuffer[bufferOffset] == 0x2D &&     /*-*/
@@ -218,9 +228,7 @@ namespace VideoRegistrator
                                 if (frameSize > 0)
                                 {
                                     byte[] frame = new byte[frameSize];
-
                                     Array.Copy(readBuffer, isJpegStartFound, frame, 0, frameSize);
-
                                     Application.Current.Dispatcher.BeginInvoke(callback, new object[] { frame, isIFrame ? true : false });
                                     isIFrame = false;
                                 }
@@ -287,28 +295,30 @@ namespace VideoRegistrator
                             actualStreamPosition = readen + actualStreamPosition;
                         }
                     }
-                    if (readen == 0)
-                        continue;
-
-                    actualData += readen;
-
-                    if (actualData == maxBufferSaveSize)
+                    if (readen > 0)
                     {
-                        //File.WriteAllBytes($@"Files\Streams\2Stream{fileCount}.txt", saveBuffer);
-                        ++fileCount;
+                        actualData += readen;
 
-                        actualData -= bufferOffset;
+                        if (actualData == maxBufferSaveSize)
+                        {
+                            //File.WriteAllBytes($@"Files\Streams\2Stream{fileCount}.txt", saveBuffer);
+                            ++fileCount;
 
-                        Array.Copy(saveBuffer, bufferOffset, saveBuffer, 0, actualData);
-                        bufferOffset = 0;
+                            actualData -= bufferOffset;
+
+                            Array.Copy(saveBuffer, bufferOffset, saveBuffer, 0, actualData);
+                            bufferOffset = 0;
+                        }
                     }
-
 
                     if (isJpegStartFound == -1)
                     {
                         for (; bufferOffset + 3 <= actualData; bufferOffset++)
                         {
-                            if (saveBuffer[bufferOffset] == 0xFF && saveBuffer[bufferOffset + 1] == 0xD8 && saveBuffer[bufferOffset + 2] == 0xFF && saveBuffer[bufferOffset + 3] == 0xE0)
+                            if (saveBuffer[bufferOffset] == 0xFF && 
+                                saveBuffer[bufferOffset + 1] == 0xD8 && 
+                                saveBuffer[bufferOffset + 2] == 0xFF && 
+                                saveBuffer[bufferOffset + 3] == 0xE0)
                             {
                                 isJpegStartFound = bufferOffset;
                                 bufferOffset++;
@@ -318,9 +328,12 @@ namespace VideoRegistrator
                     }
                     else
                     {
-                        for (; bufferOffset + 2 < actualData; bufferOffset++)
+                        for (; bufferOffset + 3 <= actualData; bufferOffset++)
                         {
-                            if (saveBuffer[bufferOffset] == 0xFF && saveBuffer[bufferOffset + 1] == 0xD8 && saveBuffer[bufferOffset + 2] == 0xFF && saveBuffer[bufferOffset + 3] == 0xE0)
+                            if (saveBuffer[bufferOffset] == 0xFF && 
+                                saveBuffer[bufferOffset + 1] == 0xD8 && 
+                                saveBuffer[bufferOffset + 2] == 0xFF && 
+                                saveBuffer[bufferOffset + 3] == 0xE0)
                             {
                                 int frameSize = bufferOffset - isJpegStartFound;
 
