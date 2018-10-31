@@ -249,8 +249,9 @@ namespace VideoRegistrator
                     }
                 }
             }
-            catch (ThreadAbortException)
+            catch (ThreadAbortException ex)
             {
+                MessageBox.Show(ex.ToString());
             }
             catch (Exception ex)
             {
