@@ -39,7 +39,7 @@ namespace HttpInterface
 			var url = string.Format(ChannelsUrl, connectionParameters.ServerIp,
 				connectionParameters.Port,
 				connectionParameters.Login,
-				Md5Helper.Md5Hash(connectionParameters.Password));
+                string.IsNullOrWhiteSpace( connectionParameters.Password) ? "" : Md5Helper.Md5Hash(connectionParameters.Password));
 
 			var responseString = _webRequestFactory.CreateAndGetResult(url);
 

@@ -87,5 +87,10 @@
 
 			return registeredEventViewModel;
 		}
-	}
+
+        private void ChannelsView_Loaded(object sender, System.Windows.RoutedEventArgs e)
+        {
+
+        }
+    }
 }

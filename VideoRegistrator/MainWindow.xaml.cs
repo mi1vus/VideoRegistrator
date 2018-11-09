@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 using System.Net;
 using System.IO;
 using NReco.VideoConverter;
-
+using AxAXVLC;
 
 
 namespace VideoRegistrator
@@ -26,6 +26,9 @@ namespace VideoRegistrator
     /// </summary>
     public partial class MainWindow : Window
     {
+        VLC VLСControl;
+        AxVLCPlugin2 VLCPlug;
+
         private Thread mainThread = null;
 
         private HttpWebRequest webRequest = null;
@@ -43,6 +46,8 @@ namespace VideoRegistrator
         private static FFMPegStream ffinStream;
         private static MemoryStream outStream = new MemoryStream();
 
+        Stream streamResponse;
+
         private delegate void OnFrameReceivedCallback(byte[] framebuffer, bool iFrame);
         private delegate void OnFrameDecodeCallback(byte[] framebuffer);
 
@@ -52,8 +57,6 @@ namespace VideoRegistrator
             {
                 InitializeComponent();
 
-                //File.Delete($@"Files\video.mpeg4");
-                //File.Delete($@"Files\video2.mpeg");
                 try
                 {
                     Directory.Delete(@"Files", true); //true - если директория не пуста удаляем все ее содержимое
@@ -65,9 +68,19 @@ namespace VideoRegistrator
                 Directory.CreateDirectory(@"Files\Frames");
 
 
-                ConvertStream(/*inStream, */outStream);
+                //ConvertStream(/*inStream, */outStream);
 
-                connectButton_Click();
+                //connectButton_Click();
+
+                VLСControl = new VLC();
+                VLCPlug = new AxVLCPlugin2();
+                WinFormsHost.Child = VLСControl;
+                //VLСControl.axVLCPlugin21.playlist.add("rtsp://91.230.153.2:126/rtsp?channelId=0c09cc2a-b077-4171-bcec-772bc81133e0&login=root&password=", null, null);
+                //VLСControl.axVLCPlugin21.playlist.add("rtsp://91.230.153.2:126/rtsp?channelId=0c09cc2a-b077-4171-bcec-772bc81133e0&login=root&password=&streamtype=alternative", null, null);
+                //VLСControl.axVLCPlugin21.playlist.add("rtsp://91.230.153.2:126/rtsp?channelId=0c09cc2a-b077-4171-bcec-772bc81133e0&login=root&password=&mode=archive&starttime=08.11.2018+03:05:01.125&speed=1", null, null);
+                VLСControl.axVLCPlugin21.playlist.add("rtsp://91.230.153.2:126/rtsp?channelId=0c09cc2a-b077-4171-bcec-772bc81133e0&login=root&password=&streamtype=alternative&mode=archive&starttime=08.11.2018+03:05:01.125&speed=1", null, null);
+                //VLСControl.axVLCPlugin21.playlist.add("rtsp://91.230.153.2:1237/rtsp?login=admin&password=3108020718camera", null, null);
+                //VLСControl.axVLCPlugin21.playlist.add("rtsp://91.230.153.2:1237/rtsp", null, null);
             }
             catch (Exception ex)
             {
@@ -90,11 +103,16 @@ namespace VideoRegistrator
                 //adress += string.Format("/video?channelnum={0}&login={1}&password={2}&resolutionx=640&resolutiony=480&fps=10", tbChannelName.Text, tbUserName.Text, string.IsNullOrEmpty(tbPassword.Text) ? "" : MD5Hash(tbPassword.Text));
 
                 var adress = string.Format(
- //"http://91.230.153.2:1235/mobile?channelnum={0}&login={1}&password={2}"
- "http://91.230.153.2:1235/video?channelnum={0}&login={1}&password={2}"
- //+ "&resolutionx=640&resolutiony=480&fps=2"
- //+ "&streamtype=alternative"
- , 0, "root", "");
+//"http://91.230.153.2:1235/mobile?"
+"http://91.230.153.2:1235/video?"
+//+ "channelId=0c09cc2a-b077-4171-bcec-772bc81133e0"
++ "channelnum={0}"
++ "&login={1}&password={2}"
+//+ "&resolutionx=640&resolutiony=480&fps=2"
++ "&streamtype=alternative"
+//+ "&mode=archive&startTime=07.11.2018+05:05:01"
+//+ "&sound=on&speed=1"
+, 0, "root", "");
 
                 webRequest = (HttpWebRequest)WebRequest.Create(adress);
                 webRequest.Method = "GET";
@@ -104,6 +122,7 @@ namespace VideoRegistrator
                 //mainThread = new Thread(ReceiveThreadEntry);
                 //mainThread.IsBackground = true;
                 //mainThread.Start();
+
                 Task saveTask1 = new Task(ReceiveThreadEntry);
                 saveTask1.Start();
 
@@ -138,9 +157,6 @@ namespace VideoRegistrator
             {
                 OnFrameReceivedCallback callback = new OnFrameReceivedCallback(OnFrameReceived);
 
-                HttpWebResponse webResponse = (HttpWebResponse)webRequest.GetResponse();
-                Stream streamResponse = webResponse.GetResponseStream();
-
                 byte[] readBuffer = new byte[maxBufferReadSize];
 
                 int isJpegStartFound = -1;
@@ -153,7 +169,7 @@ namespace VideoRegistrator
                 var fileCount = 1;
                 while (true)
                 {
-                    int readen = streamResponse.Read(readBuffer, actualData, maxBufferReadSize - actualData);
+                    int readen = ReadFromInet(readBuffer, actualData, maxBufferReadSize);
 
                     if (readen > 0)
                     {
@@ -169,6 +185,7 @@ namespace VideoRegistrator
                             Array.Copy(readBuffer, savedOffset, readed, 0, maxBufferlogSize);
 
                             File.WriteAllBytes($@"Files\Streams\1Stream{fileCount}.txt", readed);
+                            ++fileCount;
                             savedOffset += maxBufferlogSize;
                         }
 
@@ -181,7 +198,6 @@ namespace VideoRegistrator
 
                             //Application.Current.Dispatcher.BeginInvoke(callback, new object[] { readed, true });
 
-                            ++fileCount;
                             Array.Copy(readBuffer, bufferOffset, readBuffer, 0, actualData);
                             bufferOffset = 0;
                             File.AppendAllText($@"Files\read.txt", $@"ovf new actualData - {actualData} bufferOffset - {bufferOffset} {Environment.NewLine}");
@@ -277,25 +293,28 @@ namespace VideoRegistrator
                 var fileCount = 1;
                 while (true)
                 {
-                    if (outStream.Length == 0)
-                        continue;
                     int readen = 0;
-                    lock (outStream)
+                    if (outStream.Length > 0)
                     {
-                        //outStream.Position = actualStreamPosition;
-                        outStream.Seek(actualStreamPosition, SeekOrigin.Begin);
-                        readen = outStream.Read(saveBuffer, actualData, maxBufferSaveSize - actualData);
-                        if (outStream.Length <= readen + actualStreamPosition)
+                        lock (outStream)
                         {
-                            outStream.SetLength(0);
-                            actualStreamPosition = 0;
-                        }
-                        else
-                        {
-                            outStream.Seek(outStream.Length, SeekOrigin.Begin);
-                            actualStreamPosition = readen + actualStreamPosition;
+                            outStream.Seek(actualStreamPosition, SeekOrigin.Begin);
+                            readen = outStream.Read(saveBuffer, actualData, maxBufferSaveSize - actualData);
+                            if (outStream.Length <= readen + actualStreamPosition)
+                            {
+                                outStream.SetLength(0);
+                                actualStreamPosition = 0;
+                            }
+                            else
+                            {
+                                outStream.Seek(outStream.Length, SeekOrigin.Begin);
+                                actualStreamPosition = readen + actualStreamPosition;
+                            }
                         }
                     }
+
+                    //readen = ReadFromInet(saveBuffer, actualData, maxBufferSaveSize);
+
                     if (readen > 0)
                     {
                         actualData += readen;
@@ -345,7 +364,7 @@ namespace VideoRegistrator
 
                                     Array.Copy(saveBuffer, isJpegStartFound, frame, 0, frameSize);
 
-                                    Application.Current.Dispatcher.BeginInvoke(callback, frame);
+                                    Application.Current.Dispatcher.BeginInvoke(callback, new object[] { frame });
 
                                     isJpegStartFound = -1;
                                 }
@@ -405,8 +424,18 @@ namespace VideoRegistrator
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.ToString());
+                //MessageBox.Show(ex.ToString());
             }
+        }
+
+        private int ReadFromInet(byte[] readBuffer, int actualData, int max)
+        {
+            if (streamResponse == null)
+            {
+                HttpWebResponse webResponse = (HttpWebResponse)webRequest.GetResponse();
+                streamResponse = webResponse.GetResponseStream();
+            }
+            return streamResponse.Read(readBuffer, actualData, max - actualData);
         }
 
         private Task ConvertStream(/*Stream input, */Stream outputStream)
@@ -609,6 +638,16 @@ namespace VideoRegistrator
             {
                 throw new NotImplementedException();
             }
+        }
+
+        private void button_Click(object sender, RoutedEventArgs e)
+        {
+            VLСControl.axVLCPlugin21.playlist.play();
+        }
+
+        private void button1_Click(object sender, RoutedEventArgs e)
+        {
+            VLСControl.axVLCPlugin21.playlist.stop();
         }
     }
 }

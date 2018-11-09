@@ -5,8 +5,6 @@ VisualStudioVersion = 15.0.28010.2046
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VideoRegistrator", "VideoRegistrator\VideoRegistrator.csproj", "{EDD7444A-5D84-440D-A681-866A92E1D45A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HttpVideo", "MacroscopSDK_v.2.4\Examples\HttpVideo\HttpVideo.csproj", "{20B069AB-0CAB-462E-95A3-F6D6F87697D9}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,12 +21,6 @@ Global
 		{EDD7444A-5D84-440D-A681-866A92E1D45A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{EDD7444A-5D84-440D-A681-866A92E1D45A}.Release|x86.ActiveCfg = Release|Any CPU
 		{EDD7444A-5D84-440D-A681-866A92E1D45A}.Release|x86.Build.0 = Release|Any CPU
-		{20B069AB-0CAB-462E-95A3-F6D6F87697D9}.Debug|Any CPU.ActiveCfg = Debug|x86
-		{20B069AB-0CAB-462E-95A3-F6D6F87697D9}.Debug|x86.ActiveCfg = Debug|x86
-		{20B069AB-0CAB-462E-95A3-F6D6F87697D9}.Debug|x86.Build.0 = Debug|x86
-		{20B069AB-0CAB-462E-95A3-F6D6F87697D9}.Release|Any CPU.ActiveCfg = Release|x86
-		{20B069AB-0CAB-462E-95A3-F6D6F87697D9}.Release|x86.ActiveCfg = Release|x86
-		{20B069AB-0CAB-462E-95A3-F6D6F87697D9}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

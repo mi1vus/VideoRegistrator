@@ -149,7 +149,91 @@ namespace HttpVideo
 
 		private void connectButton_Click(object sender, RoutedEventArgs e)
 		{
-			if (webRequest != null)
+            //FileInfo file = new FileInfo(@"C:\Users\Jman\VideoMaker.avi");
+
+            //var currentDirectory = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
+            //// Default installation path of VideoLAN.LibVLC.Windows
+            //var libDirectory =
+            //    new DirectoryInfo(Path.Combine(currentDirectory, "libvlc", IntPtr.Size == 4 ? "win-x86" : "win-x64"));
+
+            //using (var mediaPlayer = new Vlc.DotNet.Core.VlcMediaPlayer(libDirectory))
+            //{
+
+            //    var mediaOptions = new[]
+            //    {
+            //    ":sout=#rtp{sdp=rtsp://192.168.1.162:8008/test}",
+            //    ":sout-keep"
+            //};
+
+            //    //mediaPlayer.SetMedia(new Uri("http://hls1.addictradio.net/addictrock_aac_hls/playlist.m3u8"),
+            //    //    mediaOptions);
+
+            //    mediaPlayer.SetMedia(file, mediaOptions);
+
+            //    mediaPlayer.Play();
+
+            //    Console.WriteLine("Streaming on rtsp://192.168.1.162:8008/test");
+            //    Console.WriteLine("Press any key to exit");
+            //    Console.ReadKey();
+            //}
+            //            try
+            //            {
+            //                Vlc.DotNet.Core.
+
+            //                LibVlc vlc = new LibVlc();
+            //                vlc.Initialize();
+            //                vlc.VideoOutput = pictureBox1;
+            //                vlc.PlaylistClear();
+            //                string[] Options = new string[] { ":sout=#duplicate{dst=display,dst=std {access=udp,mux=ts,dst=224.100.0.1:1234}}" };
+            //                vlc.AddTarget("c:\\1.flv", Options);
+            //                vlc.Play();
+            //            }
+            //            catch (Exception e1)
+            //            {
+            //                MessageBox.Show(e1.ToString());
+            //            }
+
+            //            using System;
+            //            using System.Threading;
+            //            using LibVLC.NET;
+
+            //class Program
+            //        {
+            //            static void Main()
+            //            {
+            //LibVLCLibrary library = LibVLCLibrary.Load(null);
+            //IntPtr inst, mp, m;
+
+            //inst = library.libvlc_new();                                      // Load the VLC engine 
+            //m = library.libvlc_media_new_location(inst, "path/to/your/file"); // Create a new item 
+            //mp = library.libvlc_media_player_new_from_media(m);               // Create a media player playing environement 
+            //library.libvlc_media_release(m);                                  // No need to keep the media now 
+            //library.libvlc_media_player_play(mp);                             // play the media_player 
+            //Thread.Sleep(10000);                                              // Let it play a bit 
+            //library.libvlc_media_player_stop(mp);                             // Stop playing 
+            //library.libvlc_media_player_release(mp);                          // Free the media_player 
+            //library.libvlc_release(inst);
+
+            //LibVLCLibrary.Free(library);
+            ////            }
+            ////        }
+
+            //LibVLCSharp.Shared.LibVLC l;
+            //l.
+
+
+
+
+
+
+
+
+
+
+
+
+
+            if (webRequest != null)
 				webRequest.Abort();
 
 			if (mainThread != null && mainThread.IsAlive)
@@ -164,7 +248,8 @@ namespace HttpVideo
 
                 //adress += string.Format("/mobile?channelnum={0}&login={1}&password={2}", tbChannelName.Text, tbUserName.Text, string.IsNullOrEmpty(tbPassword.Text) ? "" : MD5Hash(tbPassword.Text));
                 //adress += string.Format("/mjpeg?channelnum={0}&login={1}&password={2}", tbChannelName.Text, tbUserName.Text, string.IsNullOrEmpty(tbPassword.Text) ? "" : MD5Hash(tbPassword.Text));
-                adress += string.Format("/video?channelnum={0}&login={1}&password={2}&resolutionx=640&resolutiony=480&fps=10", tbChannelName.Text, tbUserName.Text, string.IsNullOrEmpty(tbPassword.Text) ? "" : MD5Hash(tbPassword.Text));
+                //adress += string.Format("/video?channelnum={0}&login={1}&password={2}&resolutionx=640&resolutiony=480&fps=10", 0, "root", "");
+                adress += string.Format("/mobile?channelnum={0}&login={1}&password={2}&resolutionx=640&resolutiony=480&fps=10", 0, "root", "");
 
                 webRequest = (HttpWebRequest)WebRequest.Create(adress);
 				webRequest.Method = "GET";
