@@ -16,7 +16,6 @@ using System.Threading.Tasks;
 using System.Net;
 using System.IO;
 using NReco.VideoConverter;
-using AxAXVLC;
 
 
 namespace VideoRegistrator
@@ -27,7 +26,7 @@ namespace VideoRegistrator
     public partial class MainWindow : Window
     {
         VLC VLСControl;
-        AxVLCPlugin2 VLCPlug;
+        //AxVLCPlugin2 VLCPlug;
 
         private Thread mainThread = null;
 
@@ -73,7 +72,7 @@ namespace VideoRegistrator
                 //connectButton_Click();
 
                 VLСControl = new VLC();
-                VLCPlug = new AxVLCPlugin2();
+                //VLCPlug = new AxVLCPlugin2();
                 WinFormsHost.Child = VLСControl;
                 //VLСControl.axVLCPlugin21.playlist.add("rtsp://91.230.153.2:126/rtsp?channelId=0c09cc2a-b077-4171-bcec-772bc81133e0&login=root&password=", null, null);
                 //VLСControl.axVLCPlugin21.playlist.add("rtsp://91.230.153.2:126/rtsp?channelId=0c09cc2a-b077-4171-bcec-772bc81133e0&login=root&password=&streamtype=alternative", null, null);

@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28010.2046
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VLCTst", "VLCTst\VLCTst.csproj", "{1D7A4CAF-5DF8-492A-BD06-BBD4FF632502}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VLC", "VLC\VLC.csproj", "{4531CF30-9900-455A-8116-F4F65E81457F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1D7A4CAF-5DF8-492A-BD06-BBD4FF632502}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1D7A4CAF-5DF8-492A-BD06-BBD4FF632502}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1D7A4CAF-5DF8-492A-BD06-BBD4FF632502}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1D7A4CAF-5DF8-492A-BD06-BBD4FF632502}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4531CF30-9900-455A-8116-F4F65E81457F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4531CF30-9900-455A-8116-F4F65E81457F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4531CF30-9900-455A-8116-F4F65E81457F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4531CF30-9900-455A-8116-F4F65E81457F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {EBFE281A-1384-4731-B679-D3865A7AFD31}
+	EndGlobalSection
+EndGlobal

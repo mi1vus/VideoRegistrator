@@ -5,6 +5,10 @@ VisualStudioVersion = 15.0.28010.2046
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VideoRegistrator", "VideoRegistrator\VideoRegistrator.csproj", "{EDD7444A-5D84-440D-A681-866A92E1D45A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VLC_WPF_Control", "VLC_WPF_Control\VLC_WPF_Control.csproj", "{8DEDA10F-2D4D-4EF3-9FDC-4760F60FDF0C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VLC_WINForms_Control", "VLC_WINForms_Control\VLC_WINForms_Control.csproj", "{599C3635-175E-4F9E-89C5-07C0663985D3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +25,22 @@ Global
 		{EDD7444A-5D84-440D-A681-866A92E1D45A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{EDD7444A-5D84-440D-A681-866A92E1D45A}.Release|x86.ActiveCfg = Release|Any CPU
 		{EDD7444A-5D84-440D-A681-866A92E1D45A}.Release|x86.Build.0 = Release|Any CPU
+		{8DEDA10F-2D4D-4EF3-9FDC-4760F60FDF0C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8DEDA10F-2D4D-4EF3-9FDC-4760F60FDF0C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8DEDA10F-2D4D-4EF3-9FDC-4760F60FDF0C}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{8DEDA10F-2D4D-4EF3-9FDC-4760F60FDF0C}.Debug|x86.Build.0 = Debug|Any CPU
+		{8DEDA10F-2D4D-4EF3-9FDC-4760F60FDF0C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8DEDA10F-2D4D-4EF3-9FDC-4760F60FDF0C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8DEDA10F-2D4D-4EF3-9FDC-4760F60FDF0C}.Release|x86.ActiveCfg = Release|Any CPU
+		{8DEDA10F-2D4D-4EF3-9FDC-4760F60FDF0C}.Release|x86.Build.0 = Release|Any CPU
+		{599C3635-175E-4F9E-89C5-07C0663985D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{599C3635-175E-4F9E-89C5-07C0663985D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{599C3635-175E-4F9E-89C5-07C0663985D3}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{599C3635-175E-4F9E-89C5-07C0663985D3}.Debug|x86.Build.0 = Debug|Any CPU
+		{599C3635-175E-4F9E-89C5-07C0663985D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{599C3635-175E-4F9E-89C5-07C0663985D3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{599C3635-175E-4F9E-89C5-07C0663985D3}.Release|x86.ActiveCfg = Release|Any CPU
+		{599C3635-175E-4F9E-89C5-07C0663985D3}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
